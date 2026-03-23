@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import nats
 from nats.aio.client import Client as NATSClient
 from nats.js.api import ConsumerConfig, DeliverPolicy
-from nats.js.client import PushSubscription
+from nats.js.client import Subscription
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class NatsManager:
         stream: str,
         timestamp_ms: int | None,
         callback,
-    ) -> PushSubscription:
+    ) -> Subscription:
         js = self._nc.jetstream()
 
         info = await js.stream_info(stream)
