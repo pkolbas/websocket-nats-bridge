@@ -44,7 +44,7 @@ async def websocket_endpoint(ws: WebSocket):
         try:
             while True:
                 data = await queue.get()
-                await ws.send_bytes(data)
+                await ws.send_text(data.decode("utf-8"))
         except Exception:
             pass
 

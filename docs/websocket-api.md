@@ -55,9 +55,9 @@ Multiple streams can be subscribed simultaneously on a single connection.
 {"type": "error", "message": "Unknown action: foo"}
 ```
 
-### Data messages (binary frames)
+### Data messages (text JSON frames)
 
-Stream data arrives as raw bytes (JSON). Parse with `json.loads()`:
+Stream data arrives as JSON text frames:
 
 ```json
 {
@@ -111,10 +111,7 @@ async def listen_funding(since_minutes_ago: int | None = None):
         await ws.send(json.dumps(cmd))
 
         async for raw in ws:
-            if isinstance(raw, bytes):
-                msg = json.loads(raw)
-            else:
-                msg = json.loads(raw)
+            msg = json.loads(raw)
 
             # Control messages have "type" field
             if "type" in msg:
@@ -153,6 +150,6 @@ Response:
 
 ## Notes
 
-- Data frames are **binary** (raw bytes from NATS). Control frames (subscribe/unsubscribe responses, errors) are **text**.
+- All frames (data and control) are **text** (JSON).
 - When subscribing with `timestamp`, historical messages arrive rapidly before transitioning to real-time. Plan for backpressure if processing is slow.
 - Closing the WebSocket automatically cleans up all NATS subscriptions.
