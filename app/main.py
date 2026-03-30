@@ -8,31 +8,13 @@ from app.config import settings
 from app.models import ClientCommand
 from app.nats_manager import NatsManager
 
-LOG_FORMAT = "%(asctime)s %(levelname)s %(name)s: %(message)s"
 logger = logging.getLogger(__name__)
-
-
-def _setup_logging():
-    formatter = logging.Formatter(LOG_FORMAT)
-
-    root = logging.getLogger()
-    root.setLevel(logging.INFO)
-    if not root.handlers:
-        root.addHandler(logging.StreamHandler())
-    for handler in root.handlers:
-        handler.setFormatter(formatter)
-
-    for name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
-        uv_logger = logging.getLogger(name)
-        for handler in uv_logger.handlers:
-            handler.setFormatter(formatter)
 
 nats_manager = NatsManager()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    _setup_logging()
     await nats_manager.connect(
         servers=settings.nats_server_list,
         user=settings.nats_user,
